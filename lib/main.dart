@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_application/StudentDetails.dart';
 import 'package:student_application/db/model/data_model.dart';
+import 'package:student_application/profilescreen.dart';
 import 'package:student_application/studenthome.dart';
 
 void main(List<String> args) async {

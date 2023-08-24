@@ -11,7 +11,7 @@ void addStudent(Studentmodel value) async {
   studentlistNotifier.notifyListeners();
 }
 
-void getAllStudents() async {
+getAllStudents() async {
   final studentdb = await Hive.openBox<Studentmodel>('student_db');
   studentlistNotifier.value.clear();
   studentlistNotifier.value.addAll(studentdb.values);

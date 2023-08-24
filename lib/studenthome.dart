@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_application/StudentDetails.dart';
 import 'package:student_application/db/functions/db_functions.dart';
@@ -63,8 +64,8 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   ? FileImage(selectedimage!)
                                   : AssetImage("assets/images/profile.png")
                                       as ImageProvider),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          Wrap(
+                            spacing: 30,
                             children: [
                               ElevatedButton(
                                   style: ButtonStyle(
@@ -84,79 +85,114 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   child: Text('C A M E R A')),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field Is Empty';
-                                }
-                              },
-                              controller: namecontroller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'N A M E',
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-z||A-Z]'))
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Field Is Empty';
+                                  }
+                                  return null;
+                                },
+                                controller: namecontroller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'N A M E',
+                                ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field Is Empty';
-                                }
-                              },
-                              keyboardType: TextInputType.number,
-                              controller: agecontroller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'A G E',
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9]'))
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Field Is Empty';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.number,
+                                controller: agecontroller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'A G E',
+                                ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field Is Empty';
-                                }
-                              },
-                              controller: emailcontroller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'E M A I L',
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-z||A-Z]'))
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Field Is Empty';
+                                  }
+                                  return null;
+                                },
+                                controller: emailcontroller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'E M A I L',
+                                ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field Is Empty';
-                                }
-                              },
-                              controller: addresscontroller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'A D D R E S S',
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-z||A-Z]'))
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Field Is Empty';
+                                  }
+                                  return null;
+                                },
+                                controller: addresscontroller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'A D D R E S S',
+                                ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Field Is Empty';
-                                }
-                              },
-                              controller: coursecontroller,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'C O U R S E',
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextFormField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[a-z||A-Z]'))
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Field Is Empty';
+                                  }
+                                  return null;
+                                },
+                                controller: coursecontroller,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'C O U R S E',
+                                ),
                               ),
                             ),
                           ),
