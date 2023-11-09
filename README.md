@@ -1,16 +1,18 @@
 # student_application
 
-A new Flutter project.
+Student Details Storing App Made By Flutter
+The Details of student stored locally using hive local database
 
-## Getting Started
+# Features
 
-This project is a starting point for a Flutter application.
+-user cann add student details
+-user can edit student details
+-user can search added student 
+-user can delete added student
+-added student shown on the homescreen as a list
+-while clicking on the student u added it will be redirected to a new screen which shows the full student details
 
-A few resources to get you started if this is your first Flutter project:
+# Screenshots
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Blank 4 Grids Collage](https://github.com/jassimpt/Student_DetailsApp_hive/assets/139531376/47dce3a4-c7c7-4937-91df-3b29a19a1ffb)
+![Blank 2 Grids Collage](https://github.com/jassimpt/Student_DetailsApp_hive/assets/139531376/8c7cb738-2493-4a4f-856e-af7cbd63a256)
