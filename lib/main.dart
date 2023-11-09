@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:student_application/StudentDetails.dart';
-import 'package:student_application/db/model/data_model.dart';
-import 'package:student_application/profilescreen.dart';
-import 'package:student_application/studenthome.dart';
+import 'package:provider/provider.dart';
+import 'package:student_application/controllers/db_function_provider.dart';
+import 'package:student_application/controllers/imagepicker_provider.dart';
+import 'package:student_application/models/data_model.dart';
+
+import 'package:student_application/views/StudentDetails.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +21,21 @@ class studentapp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.blueGrey),
-      debugShowCheckedModeBanner: false,
-      title: 'student app',
-      home: DetailsScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => DbProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ImagePickerProvider(),
+        )
+      ],
+      child: MaterialApp(
+        theme: ThemeData(primarySwatch: Colors.blueGrey),
+        debugShowCheckedModeBanner: false,
+        title: 'student app',
+        home: DetailsScreen(),
+      ),
     );
   }
 }

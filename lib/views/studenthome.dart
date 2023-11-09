@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:student_application/StudentDetails.dart';
-import 'package:student_application/db/functions/db_functions.dart';
-import 'package:student_application/db/model/data_model.dart';
+import 'package:provider/provider.dart';
+
+import 'package:student_application/controllers/db_function_provider.dart';
+import 'package:student_application/controllers/imagepicker_provider.dart';
+
+import 'package:student_application/models/data_model.dart';
+import 'package:student_application/views/StudentDetails.dart';
 
 class StudentHOme extends StatefulWidget {
   const StudentHOme({super.key});
@@ -22,11 +26,10 @@ class _StudentHOmeState extends State<StudentHOme> {
   var coursecontroller = TextEditingController();
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  File? selectedimage;
-
   @override
   Widget build(BuildContext context) {
-    getAllStudents();
+    Provider.of<DbProvider>(context).getAllStudents();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -37,8 +40,8 @@ class _StudentHOmeState extends State<StudentHOme> {
               height: MediaQuery.of(context).size.height,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 80, 0, 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -55,34 +58,54 @@ class _StudentHOmeState extends State<StudentHOme> {
                   ),
                   Expanded(
                     child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
+                        ),
+                        color: Colors.white,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
                               radius: 100,
-                              backgroundImage: selectedimage != null
-                                  ? FileImage(selectedimage!)
-                                  : AssetImage("assets/images/profile.png")
+                              backgroundImage: Provider.of<ImagePickerProvider>(
+                                              context,
+                                              listen: false)
+                                          .selectedimage !=
+                                      null
+                                  ? FileImage(Provider.of<ImagePickerProvider>(
+                                          context,
+                                          listen: false)
+                                      .selectedimage!)
+                                  : const AssetImage(
+                                          "assets/images/profile.png")
                                       as ImageProvider),
                           Wrap(
                             spacing: 30,
                             children: [
                               ElevatedButton(
-                                  style: ButtonStyle(
+                                  style: const ButtonStyle(
                                       backgroundColor: MaterialStatePropertyAll(
                                           Colors.black)),
                                   onPressed: () {
-                                    fromgallery();
+                                    Provider.of<ImagePickerProvider>(context,
+                                            listen: false)
+                                        .pickimage(source: ImageSource.gallery);
                                   },
-                                  child: Text('G A L L E R Y')),
+                                  child: const Text('G A L L E R Y')),
                               ElevatedButton(
-                                  style: ButtonStyle(
+                                  style: const ButtonStyle(
                                       backgroundColor: MaterialStatePropertyAll(
                                           Colors.black)),
                                   onPressed: () {
-                                    fromcam();
+                                    Provider.of<ImagePickerProvider>(context,
+                                            listen: false)
+                                        .pickimage(source: ImageSource.camera);
                                   },
-                                  child: Text('C A M E R A')),
+                                  child: const Text('C A M E R A')),
                             ],
                           ),
                           Flexible(
@@ -100,7 +123,7 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   return null;
                                 },
                                 controller: namecontroller,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'N A M E',
                                 ),
@@ -123,7 +146,7 @@ class _StudentHOmeState extends State<StudentHOme> {
                                 },
                                 keyboardType: TextInputType.number,
                                 controller: agecontroller,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'A G E',
                                 ),
@@ -145,7 +168,7 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   return null;
                                 },
                                 controller: emailcontroller,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'E M A I L',
                                 ),
@@ -167,7 +190,7 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   return null;
                                 },
                                 controller: addresscontroller,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'A D D R E S S',
                                 ),
@@ -189,7 +212,7 @@ class _StudentHOmeState extends State<StudentHOme> {
                                   return null;
                                 },
                                 controller: coursecontroller,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'C O U R S E',
                                 ),
@@ -200,23 +223,15 @@ class _StudentHOmeState extends State<StudentHOme> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
-                                style: ButtonStyle(
+                                style: const ButtonStyle(
                                     backgroundColor:
                                         MaterialStatePropertyAll(Colors.black)),
                                 onPressed: studentAdding,
-                                child: Text('S U B M I T'),
+                                child: const Text('S U B M I T'),
                               ),
                             ],
                           ),
                         ],
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(40),
-                          topRight: Radius.circular(40),
-                        ),
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -231,29 +246,31 @@ class _StudentHOmeState extends State<StudentHOme> {
 
   Future<void> studentAdding() async {
     if (formkey.currentState!.validate()) {
-      final _name = namecontroller.text.trim();
-      final _age = agecontroller.text.trim();
-      final _email = emailcontroller.text.trim();
-      final _address = addresscontroller.text.trim();
-      final _course = coursecontroller.text.trim();
-      if (_name.isEmpty ||
-          _age.isEmpty ||
-          _email.isEmpty ||
-          _address.isEmpty ||
-          _course.isEmpty) {
+      final name = namecontroller.text.trim();
+      final age = agecontroller.text.trim();
+      final email = emailcontroller.text.trim();
+      final address = addresscontroller.text.trim();
+      final course = coursecontroller.text.trim();
+      if (name.isEmpty ||
+          age.isEmpty ||
+          email.isEmpty ||
+          address.isEmpty ||
+          course.isEmpty) {
         return;
       } else {
         final student = Studentmodel(
-            name: _name,
-            age: _age,
-            email: _email,
-            address: _address,
-            course: _course,
-            image: selectedimage!.path);
+            name: name,
+            age: age,
+            email: email,
+            address: address,
+            course: course,
+            image: Provider.of<ImagePickerProvider>(context, listen: false)
+                .selectedimage!
+                .path);
 
-        addStudent(student);
+        Provider.of<DbProvider>(context, listen: false).addStudent(student);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
             'Student Added Successfully',
           ),
@@ -261,26 +278,9 @@ class _StudentHOmeState extends State<StudentHOme> {
         ));
 
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => DetailsScreen(),
+          builder: (context) => const DetailsScreen(),
         ));
       }
     }
-  }
-
-  fromgallery() async {
-    final returnedimage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      selectedimage = File(returnedimage!.path);
-    });
-  }
-
-  fromcam() async {
-    final returnedimage =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    setState(() {
-      selectedimage = File(returnedimage!.path);
-    });
   }
 }

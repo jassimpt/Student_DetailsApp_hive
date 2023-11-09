@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:student_application/StudentDetails.dart';
-import 'package:student_application/db/functions/db_functions.dart';
-import 'package:student_application/db/model/data_model.dart';
+import 'package:provider/provider.dart';
+import 'package:student_application/controllers/db_function_provider.dart';
+import 'package:student_application/controllers/imagepicker_provider.dart';
+import 'package:student_application/models/data_model.dart';
+import 'package:student_application/views/StudentDetails.dart';
 
 class EditScreen extends StatefulWidget {
   const EditScreen(
@@ -36,8 +36,6 @@ class _EditScreen extends State<EditScreen> {
   final TextEditingController addresscontroller = TextEditingController();
   final TextEditingController coursecontroller = TextEditingController();
 
-  File? selectedimage;
-
   @override
   void initState() {
     namecontroller.text = widget.name;
@@ -45,14 +43,16 @@ class _EditScreen extends State<EditScreen> {
     emailcontroller.text = widget.email;
     addresscontroller.text = widget.address;
     coursecontroller.text = widget.course;
-    selectedimage = widget.image != null ? File(widget.image) : null;
+    Provider.of<ImagePickerProvider>(context, listen: false).selectedimage =
+        widget.image != null ? File(widget.image) : null;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    getAllStudents();
+    Provider.of<DbProvider>(context).getAllStudents();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -61,8 +61,8 @@ class _EditScreen extends State<EditScreen> {
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 80, 0, 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -79,41 +79,58 @@ class _EditScreen extends State<EditScreen> {
                 ),
                 Expanded(
                   child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
+                      color: Colors.white,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircleAvatar(
                             radius: 100,
-                            backgroundImage: selectedimage != null
-                                ? FileImage(selectedimage!)
-                                : AssetImage("assets/images/profile.png")
+                            backgroundImage: Provider.of<ImagePickerProvider>(
+                                            context)
+                                        .selectedimage !=
+                                    null
+                                ? FileImage(
+                                    Provider.of<ImagePickerProvider>(context)
+                                        .selectedimage!)
+                                : const AssetImage("assets/images/profile.png")
                                     as ImageProvider),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             ElevatedButton(
-                                style: ButtonStyle(
+                                style: const ButtonStyle(
                                     backgroundColor:
                                         MaterialStatePropertyAll(Colors.black)),
                                 onPressed: () {
-                                  fromgallery();
+                                  Provider.of<ImagePickerProvider>(context,
+                                          listen: false)
+                                      .pickimage(source: ImageSource.gallery);
                                 },
-                                child: Text('G A L L E R Y')),
+                                child: const Text('G A L L E R Y')),
                             ElevatedButton(
-                                style: ButtonStyle(
+                                style: const ButtonStyle(
                                     backgroundColor:
                                         MaterialStatePropertyAll(Colors.black)),
                                 onPressed: () {
-                                  fromcam();
+                                  Provider.of<ImagePickerProvider>(context,
+                                          listen: false)
+                                      .pickimage(source: ImageSource.camera);
                                 },
-                                child: Text('C A M E R A')),
+                                child: const Text('C A M E R A')),
                           ],
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: TextFormField(
                             controller: namecontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'N A M E',
                             ),
@@ -124,7 +141,7 @@ class _EditScreen extends State<EditScreen> {
                           child: TextFormField(
                             keyboardType: TextInputType.number,
                             controller: agecontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'A G E',
                             ),
@@ -134,7 +151,7 @@ class _EditScreen extends State<EditScreen> {
                           padding: const EdgeInsets.all(10.0),
                           child: TextFormField(
                             controller: emailcontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'E M A I L',
                             ),
@@ -144,7 +161,7 @@ class _EditScreen extends State<EditScreen> {
                           padding: const EdgeInsets.all(10.0),
                           child: TextFormField(
                             controller: addresscontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'A D D R E S S',
                             ),
@@ -154,7 +171,7 @@ class _EditScreen extends State<EditScreen> {
                           padding: const EdgeInsets.all(10.0),
                           child: TextFormField(
                             controller: coursecontroller,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'C O U R S E',
                             ),
@@ -164,25 +181,17 @@ class _EditScreen extends State<EditScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             ElevatedButton(
-                              style: ButtonStyle(
+                              style: const ButtonStyle(
                                   backgroundColor:
                                       MaterialStatePropertyAll(Colors.black)),
                               onPressed: () {
                                 update();
                               },
-                              child: Text('U P D A T E'),
+                              child: const Text('U P D A T E'),
                             ),
                           ],
                         ),
                       ],
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
-                      ),
-                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -195,52 +204,38 @@ class _EditScreen extends State<EditScreen> {
   }
 
   update() async {
-    final edited_name = namecontroller.text.trim();
-    final edited_age = agecontroller.text.trim();
-    final edited_email = emailcontroller.text.trim();
-    final edited_address = addresscontroller.text.trim();
-    final edited_course = coursecontroller.text.trim();
-    final edited_image = selectedimage?.path;
+    final editedName = namecontroller.text.trim();
+    final editedAge = agecontroller.text.trim();
+    final editedEmail = emailcontroller.text.trim();
+    final editedAddress = addresscontroller.text.trim();
+    final editedCourse = coursecontroller.text.trim();
+    final editedImage = Provider.of<ImagePickerProvider>(context, listen: false)
+        .selectedimage
+        ?.path;
 
-    if (edited_name.isEmpty ||
-        edited_age.isEmpty ||
-        edited_email.isEmpty ||
-        edited_address.isEmpty ||
-        edited_course.isEmpty) {
+    if (editedName.isEmpty ||
+        editedAge.isEmpty ||
+        editedEmail.isEmpty ||
+        editedAddress.isEmpty ||
+        editedCourse.isEmpty) {
       return;
     }
     final updated = Studentmodel(
-        name: edited_name,
-        age: edited_age,
-        email: edited_email,
-        address: edited_address,
-        course: edited_course,
-        image: edited_image);
+        name: editedName,
+        age: editedAge,
+        email: editedEmail,
+        address: editedAddress,
+        course: editedCourse,
+        image: editedImage);
 
-    editstudent(widget.index, updated);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    Provider.of<DbProvider>(context, listen: false)
+        .editstudent(widget.index, updated);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Updated Successfully'),
       behavior: SnackBarBehavior.floating,
     ));
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => DetailsScreen(),
+      builder: (context) => const DetailsScreen(),
     ));
-  }
-
-  fromgallery() async {
-    final returnedimage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      selectedimage = File(returnedimage!.path);
-    });
-  }
-
-  fromcam() async {
-    final returnedimage =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-    setState(() {
-      selectedimage = File(returnedimage!.path);
-    });
   }
 }
